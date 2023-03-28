@@ -7,9 +7,12 @@
   width: 100%;
 }
 
+/* 전체 감싸기 */
 .wrapper {
-  position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* 상단바 */
@@ -17,10 +20,12 @@
   position: fixed;
   width: 100%;
   background-color: white;
-  border-bottom: 1px solid grey;
+  border-bottom: 1px solid lightgrey;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 20px 20px 10px;
+  padding: 10px 20px 10px;
+  top: 0;
   left: 0;
 }
 
@@ -36,24 +41,13 @@
 
 /*  메뉴 아이콘넣을 박스  */
 .menuBar {
-  width: 50%;
-  display: flex;
-  justify-content: flex-end;
-}
-
-/*  메뉴 아이콘  */
-.fa-bars {
+  font-size: 20px;
   cursor: pointer;
 }
 
+/* 검색창 */
 .search-container {
-  position: fixed;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  top: 15%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin-top: 100px;
 }
 
 .search-container input[type="text"] {
@@ -73,27 +67,23 @@
   cursor: pointer;
 }
 
+/* 공지사항 */
 .entire {
-  position: absolute;
+  margin-top: 50px;
   display: flex;
   justify-content: center;
-  align-items: center;
   flex-wrap: wrap;
   gap: 50px;
-  opacity: 1;
-  margin-top: 200px;
   transition: all ease-out 0.3s;
-  margin-left: 450px;
+  cursor: pointer;
 }
 .notice-list {
-  position: relative;
-  flex-basis: calc(50% - 100px);
+  min-width: 500px;
   text-align: center;
-  height: 100px;
+  height: 150px;
   background-color: white;
-  border-radius: var(--list-border-radius);
-  box-shadow: 0px 2px 50px rgba(0, 0, 0, 0.3);
-  margin-bottom: 10px;
+  border-radius: 20px;
+  box-shadow: 10px 10px 20px rgba(141, 141, 141, 0.3);
 }
 
 .notice-list-text {
