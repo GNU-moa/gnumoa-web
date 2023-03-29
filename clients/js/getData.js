@@ -16,7 +16,7 @@ const querySnapshot = await getDocs(q);
 
 querySnapshot.forEach((docSnap) => {
   // notice-list 클래스를 가진 div 요소 생성
-  const noticeList = document.createElement("div");
+  const noticeList = document.createElement("a");
   noticeList.classList.add("notice-list");
   const data = docSnap.data();
 
@@ -47,10 +47,7 @@ querySnapshot.forEach((docSnap) => {
   // 부모 요소에 생성한 요소 추가
   entire.appendChild(noticeList);
   if (data.baseUrl) {
-    noticeList.addEventListener("click", () => {
-      noticeList.addEventListener("click", () => {
-        window.open(data.baseUrl, "_blank"); // 링크를 새 창에서 열기
-      });
-    });
+    noticeList.href = data.baseUrl; // href 속성에 data.baseUrl 할당
+    noticeList.target = "_blank"; // 새 창에서 열기
   }
 });
