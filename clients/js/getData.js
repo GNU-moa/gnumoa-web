@@ -1,14 +1,20 @@
 import { db } from "./firebase.js";
 import {
-  doc,
-  getDoc,
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
   Timestamp,
 } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-firestore.js";
 
-const docRef = doc(db, "korea", "korea_장학-등록_1");
-const docSnap = await getDoc(docRef);
+const noticesCol = collection(db, "korea");
 
-if (docSnap.exists()) {
+// 최근 10개의 글만 가져옴
+const q = query(noticesCol, orderBy("createdAt", "desc"), limit(10));
+const querySnapshot = await getDocs(q);
+
+querySnapshot.forEach((docSnap) => {
   // notice-list 클래스를 가진 div 요소 생성
   const noticeList = document.createElement("div");
   noticeList.classList.add("notice-list");
@@ -47,7 +53,4 @@ if (docSnap.exists()) {
       });
     });
   }
-} else {
-  // doc.data() will be undefined in this case
-  console.log("No such document!");
-}
+});
