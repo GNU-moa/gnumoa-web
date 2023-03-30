@@ -2,17 +2,40 @@ import { db } from "./firebase.js";
 import {
   collection,
   query,
+  doc,
+  getDoc,
   orderBy,
   limit,
   getDocs,
   startAfter,
   Timestamp,
 } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-firestore.js";
+const entire = document.querySelector(".entire");
+const tagContainer = document.querySelector(".tag-container");
+
+async function drawTag(tag) {
+  const tagList = document.createElement("a");
+  tagList.classList.add("tag-list");
+  tagList.innerHTML = `
+    <span>${tag}</span>
+    <span> | </span>
+  `;
+  let baseUrl = `./department.html`;
+  if (queryParams.has("category")) {
+    queryParams.set("category", tag);
+    baseUrl += `?${queryParams.toString()}`;
+  } else {
+    console.log(queryParams);
+    baseUrl += `?${queryParams.toString()}&category=${tag}`;
+  }
+  tagContainer.appendChild(tagList);
+
+  tagList.href = baseUrl; // href 속성에 data.baseUrl 할당
+}
 
 async function loadNotices(lastDoc) {
   let q;
   if (lastDoc) {
-    console.log("aaa");
     q = query(
       noticesCol,
       orderBy("createdAt", "desc"),
@@ -20,7 +43,6 @@ async function loadNotices(lastDoc) {
       limit(5)
     );
   } else {
-    console.log("bbb");
     q = query(noticesCol, orderBy("createdAt", "desc"), limit(5));
   }
   const querySnapshot = await getDocs(q);
@@ -51,7 +73,7 @@ async function loadNotices(lastDoc) {
     const isoString = date.toISOString().substring(0, 10);
 
     noticeList.innerHTML = `
-    <p class="notice-list-tag">국어국문학과 ${categoryName}</p>
+    <p class="notice-list-tag">${department} ${categoryName}</p>
     <p class="notice-list-title">${title}</p>
     <p class="notice-list-content">${content}</p>
     <p class="notice-list-date">${isoString}</p>
@@ -76,15 +98,31 @@ function isScrollAtBottom() {
   return scrollTop + clientHeight >= scrollHeight;
 }
 
-const entire = document.querySelector(".entire");
-
 // URL 파라미터 가져오기
 const queryParams = new URLSearchParams(window.location.search);
+const college = queryParams.get("college");
 const department = queryParams.get("department");
+let category = queryParams.get("category");
+console.log(college, department, category);
 
-const noticesCol = collection(db, department);
 let lastDoc = null; // 이전 쿼리에서 마지막으로 가져온 문서
 let checking = false; // 스크롤 이벤트 중복 방지
+
+const departmentDoc = doc(db, `${college}/${department}`);
+const departmentDocSnap = await getDoc(departmentDoc);
+
+// 카테고리 가져오기
+const data = departmentDocSnap.data();
+const categories = data.categories;
+
+categories.forEach((tag) => {
+  if (!category) {
+    category = tag;
+  }
+  drawTag(tag);
+});
+
+const noticesCol = collection(departmentDoc, category);
 
 lastDoc = await loadNotices();
 
