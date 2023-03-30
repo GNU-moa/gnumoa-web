@@ -21,19 +21,23 @@
     <div class="wrapper">
       <!-- 상단바 -->
       <div class="topBar">
-        <span class="logo">GNUMOA</span>
+        <span class="logo"><a href="./index.html">GNUMOA</a></span>
         <span class="menuBar">
           <i class="fa-solid fa-bars"></i>
         </span>
       </div>
+      <main class="main-container">
+        <div class="search-container">
+          <input type="text" placeholder="검색어를 입력하세요" />
+          <button type="submit">검색</button>
+        </div>
+        <div class="tag-container">
+          <span></span>
+        </div>
 
-      <div class="search-container">
-        <input type="text" placeholder="검색어를 입력하세요" />
-        <button type="submit">검색</button>
-      </div>
-
-      <!--  공지 올라오는 list  -->
-      <div class="entire"></div>
+        <!--  공지 올라오는 list  -->
+        <div class="entire"></div>
+      </main>
     </div>
     <script type="module" src="clients/js/firebase.js"></script>
     <script type="module" src="clients/js/getData.js"></script>

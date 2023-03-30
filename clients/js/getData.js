@@ -1,17 +1,24 @@
 import { db } from "./firebase.js";
-import { collection, query, orderBy, limit, getDocs, startAfter, Timestamp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-firestore.js";
-const entire = document.querySelector(".entire");
-
-const noticesCol = collection(db, "korea");
-let lastDoc = null; // 이전 쿼리에서 마지막으로 가져온 문서
-let checking = false; // 스크롤 이벤트 중복 방지
+import {
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  startAfter,
+  Timestamp,
+} from "https://www.gstatic.com/firebasejs/9.18.0/firebase-firestore.js";
 
 async function loadNotices(lastDoc) {
-  // 최근 10개의 글만 가져옴
   let q;
   if (lastDoc) {
     console.log("aaa");
-    q = query(noticesCol, orderBy("createdAt", "desc"), startAfter(lastDoc), limit(5));
+    q = query(
+      noticesCol,
+      orderBy("createdAt", "desc"),
+      startAfter(lastDoc),
+      limit(5)
+    );
   } else {
     console.log("bbb");
     q = query(noticesCol, orderBy("createdAt", "desc"), limit(5));
@@ -37,7 +44,10 @@ async function loadNotices(lastDoc) {
 
     // 날짜 데이터 변환
     const timestamp = data.createdAt;
-    const date = new Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate();
+    const date = new Timestamp(
+      timestamp.seconds,
+      timestamp.nanoseconds
+    ).toDate();
     const isoString = date.toISOString().substring(0, 10);
 
     noticeList.innerHTML = `
@@ -65,6 +75,16 @@ function isScrollAtBottom() {
 
   return scrollTop + clientHeight >= scrollHeight;
 }
+
+const entire = document.querySelector(".entire");
+
+// URL 파라미터 가져오기
+const queryParams = new URLSearchParams(window.location.search);
+const department = queryParams.get("department");
+
+const noticesCol = collection(db, department);
+let lastDoc = null; // 이전 쿼리에서 마지막으로 가져온 문서
+let checking = false; // 스크롤 이벤트 중복 방지
 
 lastDoc = await loadNotices();
 
