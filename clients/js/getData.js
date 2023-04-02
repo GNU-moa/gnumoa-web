@@ -82,7 +82,6 @@ async function loadNotices(lastDoc) {
     <p class="notice-list-title">${title}</p>
     <p class="notice-list-content">${content}</p>
     <p class="notice-list-date">${isoString}</p>
-    <p class="notice-list-like"><i class="far fa-heart"></i></p>
 `;
 
     // 부모 요소에 생성한 요소 추가

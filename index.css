@@ -54,7 +54,7 @@ body {
 }
 
 .search-container input[type="text"] {
-  padding: 10px 150px;
+  padding: 10px 0px;
   border: 1px solid grey;
   border-radius: 20px;
   font-size: 16px;
@@ -73,10 +73,9 @@ body {
 
 /* 공지사항 */
 .entire {
-  width: 100%;
   margin-top: 50px;
   transition: all ease-out 0.3s;
-  max-width: 850px;
+  padding: 10px;
 }
 
 .notice-list {
@@ -115,17 +114,8 @@ body {
   color: grey;
 }
 
-.notice-list-like {
-  position: absolute;
-  bottom: 10px;
-  right: 30px;
-  font-size: 20px;
-  font-size: 25px;
-  color: grey;
-}
-
 /* 단과대학 전체 박스 */
-.department_entire{
+.department_entire {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -135,11 +125,10 @@ body {
   opacity: 1;
   margin-top: 20px;
   max-width: 900px;
-  
 }
 
 /* 각 대학 박스 */
-.department{
+.department {
   position: relative;
   bottom: -50px;
   text-align: center;
@@ -152,14 +141,14 @@ body {
   display: block;
 }
 
-.toglle_icon{
+.toglle_icon {
   position: absolute;
-    top:10px;
-    right: 30px;
-    font-size: 25px;
+  top: 10px;
+  right: 30px;
+  font-size: 25px;
 }
 
-.department_content{
+.department_content {
   position: absolute;
   font-size: 20px;
   top: 10px;
