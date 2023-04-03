@@ -149,9 +149,20 @@ body {
 }
 
 .department_content {
-  position: absolute;
+  /* position: absolute; */
   font-size: 20px;
   top: 10px;
   left: 130px;
   font-weight: 600;
+}
+
+.department_detail{
+  /* position: absolute; */
+  font-size: 20px;
+  top: 60px;
+  left: 65px;
+}
+
+.department_detail {
+  display: none;
 }
