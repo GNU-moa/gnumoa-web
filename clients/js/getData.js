@@ -36,7 +36,7 @@ async function drawTag(tag) {
 
 async function getCategories() {
   const listSubcollections = httpsCallable(functions, "listSubcollections");
-  return listSubcollections({ college: "inmun", department: "korea" })
+  return listSubcollections({ college: college, department: department })
     .then(async (result) => {
       const categories = await result.data.collections;
       return categories;
@@ -49,7 +49,12 @@ async function getCategories() {
 async function loadNotices(lastDoc) {
   let q;
   if (lastDoc) {
-    q = query(noticesCol, orderBy("createdAt", "desc"), startAfter(lastDoc), limit(5));
+    q = query(
+      noticesCol,
+      orderBy("createdAt", "desc"),
+      startAfter(lastDoc),
+      limit(5)
+    );
   } else {
     q = query(noticesCol, orderBy("createdAt", "desc"), limit(5));
   }
@@ -64,9 +69,7 @@ async function loadNotices(lastDoc) {
 
     // 데이터 추가
     const title = data.title;
-    const categoryName = data.categoryName;
-
-    let content = data.context[0] || null;
+    let content = data.summary[0] || null;
     // content 길이가 일정 이상이면 자르기
     if (content.length > 10) {
       content = content.substring(0, 60) + "...";
@@ -74,7 +77,10 @@ async function loadNotices(lastDoc) {
 
     // 날짜 데이터 변환
     const timestamp = data.createdAt;
-    const date = new Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate();
+    const date = new Timestamp(
+      timestamp.seconds,
+      timestamp.nanoseconds
+    ).toDate();
     const isoString = date.toISOString().substring(0, 10);
 
     noticeList.innerHTML = `
