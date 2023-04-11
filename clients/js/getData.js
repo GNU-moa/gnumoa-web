@@ -69,7 +69,7 @@ async function loadNotices(lastDoc) {
 
     // 데이터 추가
     const title = data.title;
-    let content = data.summary[0] || null;
+    let content = data.context[0] || null;
     // content 길이가 일정 이상이면 자르기
     if (content.length > 10) {
       content = content.substring(0, 60) + "...";
