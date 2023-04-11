@@ -165,4 +165,17 @@ body {
 
 .department_detail {
   display: none;
+  list-style-type: none;
+}
+
+a{
+  cursor: pointer;
+}
+
+a:hover{
+  color: #1472ff;
+}
+
+.toglle_icon{
+  cursor: pointer;
 }
