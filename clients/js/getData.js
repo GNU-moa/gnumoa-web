@@ -23,12 +23,18 @@ async function drawTag(tag) {
     <span> | </span>
   `;
   let baseUrl = `./department.html`;
-  if (queryParams.has("category")) {
-    queryParams.set("category", tag);
-    baseUrl += `?${queryParams.toString()}`;
+  if (tag !== "전체") {
+    if (queryParams.has("category")) {
+      queryParams.set("category", tag);
+      baseUrl += `?${queryParams.toString()}`;
+    } else {
+      baseUrl += `?${queryParams.toString()}&category=${tag}`;
+    }
   } else {
-    baseUrl += `?${queryParams.toString()}&category=${tag}`;
+    queryParams.delete("category");
+    baseUrl += `?${queryParams.toString()}`;
   }
+
   tagContainer.appendChild(tagList);
 
   tagList.href = baseUrl; // href 속성에 data.baseUrl 할당
@@ -122,10 +128,10 @@ const departmentDoc = doc(db, `${college}/${department}`);
 // 카테고리 가져오기
 const categories = await getCategories();
 
+if (categories.length > 1) {
+  drawTag("전체");
+}
 categories.forEach((tag) => {
-  if (!category) {
-    category = tag;
-  }
   drawTag(tag);
 });
 
