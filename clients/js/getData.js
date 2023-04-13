@@ -109,6 +109,7 @@ async function loadNotices(lastDoc) {
     const latestFivePosts = flattenedPosts.slice(0, 5);
     latestFivePosts.forEach((data) => {
       drawNotice(data);
+      return;
     });
   }
 
