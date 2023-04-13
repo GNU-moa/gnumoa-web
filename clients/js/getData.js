@@ -52,56 +52,83 @@ async function getCategories() {
     });
 }
 
-async function loadNotices(lastDoc) {
-  let q;
-  if (lastDoc) {
-    q = query(
-      noticesCol,
-      orderBy("createdAt", "desc"),
-      startAfter(lastDoc),
-      limit(5)
-    );
-  } else {
-    q = query(noticesCol, orderBy("createdAt", "desc"), limit(5));
+// 카테고리가 없으면 전체 문서를 가져오고, 있으면 카테고리 문서를 가져옴
+function getCategoryRef(category) {
+  if (category === null) {
+    return departmentDoc;
   }
-  const querySnapshot = await getDocs(q);
-  lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+  return collection(departmentDoc, category);
+}
 
-  querySnapshot.forEach((docSnap) => {
-    // notice-list 클래스를 가진 div 요소 생성
-    const noticeList = document.createElement("a");
-    noticeList.classList.add("notice-list");
-    const data = docSnap.data();
+function drawNotice(data) {
+  const noticeList = document.createElement("a");
+  noticeList.classList.add("notice-list");
 
-    // 데이터 추가
-    const title = data.title;
-    let content = data.context[0] || null;
-    // content 길이가 일정 이상이면 자르기
-    if (content.length > 10) {
-      content = content.substring(0, 60) + "...";
-    }
+  // 데이터 추가
+  const title = data.title;
+  let content = data.context[0] || null;
+  // content 길이가 일정 이상이면 자르기
+  if (content.length > 10) {
+    content = content.substring(0, 60) + "...";
+  }
 
-    // 날짜 데이터 변환
-    const timestamp = data.createdAt;
-    const date = new Timestamp(
-      timestamp.seconds,
-      timestamp.nanoseconds
-    ).toDate();
-    const isoString = date.toISOString().substring(0, 10);
+  // 날짜 데이터 변환
+  const timestamp = data.createdAt;
+  const date = new Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate();
+  const isoString = date.toISOString().substring(0, 10);
 
-    noticeList.innerHTML = `
+  noticeList.innerHTML = `
     <p class="notice-list-tag">${department} ${category}</p>
     <p class="notice-list-title">${title}</p>
     <p class="notice-list-content">${content}</p>
     <p class="notice-list-date">${isoString}</p>
 `;
 
-    // 부모 요소에 생성한 요소 추가
-    entire.appendChild(noticeList);
-    if (data.baseUrl) {
-      noticeList.href = data.baseUrl; // href 속성에 data.baseUrl 할당
-      noticeList.target = "_blank"; // 새 창에서 열기
-    }
+  // 부모 요소에 생성한 요소 추가
+  entire.appendChild(noticeList);
+  if (data.baseUrl) {
+    noticeList.href = data.baseUrl; // href 속성에 data.baseUrl 할당
+    noticeList.target = "_blank"; // 새 창에서 열기
+  }
+}
+
+async function loadNotices(lastDoc) {
+  let q;
+  if (category == null) {
+    const latestPostsPromises = categories.map(async (category) => {
+      const categoryRef = getCategoryRef(category);
+      const q = query(categoryRef, orderBy("createdAt", "desc"), limit(5));
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map((doc) => doc.data());
+    });
+    const latestPosts = await Promise.all(latestPostsPromises);
+    const flattenedPosts = latestPosts.flat();
+    flattenedPosts.sort(
+      (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
+    );
+    const latestFivePosts = flattenedPosts.slice(0, 5);
+    latestFivePosts.forEach((data) => {
+      drawNotice(data);
+    });
+  }
+
+  if (lastDoc) {
+    q = query(
+      getCategoryRef(category),
+      orderBy("createdAt", "desc"),
+      startAfter(lastDoc),
+      limit(5)
+    );
+  } else {
+    q = query(getCategoryRef(category), orderBy("createdAt", "desc"), limit(5));
+  }
+  const querySnapshot = await getDocs(q);
+  lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+  querySnapshot.forEach((docSnap) => {
+    // notice-list 클래스를 가진 div 요소 생성
+    const data = docSnap.data();
+    drawNotice(data);
   });
   return lastDoc;
 }
@@ -134,8 +161,6 @@ if (categories.length > 1) {
 categories.forEach((tag) => {
   drawTag(tag);
 });
-
-const noticesCol = collection(departmentDoc, category);
 
 lastDoc = await loadNotices();
 
