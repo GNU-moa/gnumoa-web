@@ -8,7 +8,6 @@ import {
   limit,
   getDocs,
   startAfter,
-  Timestamp,
 } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-firestore.js";
 import { httpsCallable } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-functions.js";
 
@@ -34,6 +33,19 @@ function getCategoryRef(category) {
 
 async function loadNotices(lastDoc) {
   let q;
+  const cacheKey = `${college}-${department}-${category || "전체"}`;
+  const cachedData = sessionStorage.getItem(cacheKey);
+
+  if (category == null && cachedData) {
+    const datas = JSON.parse(cachedData);
+    datas.forEach((data) => {
+      drawNotice(data);
+    });
+    console.log("cached data loaded");
+    return null;
+  }
+
+  let newDatas;
   if (category == null) {
     const latestPostsPromises = categories.map(async (category) => {
       const categoryRef = getCategoryRef(category);
@@ -55,28 +67,42 @@ async function loadNotices(lastDoc) {
       (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
     );
 
+    sessionStorage.setItem(cacheKey, JSON.stringify(flattenedPosts));
+
     for (const data of flattenedPosts) {
       drawNotice(data);
     }
+
+    newDatas = flattenedPosts;
+  } else {
+    if (cachedData) {
+      newDatas = JSON.parse(cachedData);
+      newDatas.forEach((data) => {
+        drawNotice(data);
+      });
+      console.log("cached data loaded");
+    }
+    q = lastDoc
+      ? query(
+          getCategoryRef(category),
+          orderBy("createdAt", "desc"),
+          startAfter(lastDoc),
+          limit(5)
+        )
+      : query(getCategoryRef(category), orderBy("createdAt", "desc"), limit(5));
+
+    const querySnapshot = await getDocs(q);
+    lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+    const datas = querySnapshot.docs.map((doc) => doc.data());
+    newDatas = cachedData ? newDatas.concat(datas) : datas;
+
+    sessionStorage.setItem(cacheKey, JSON.stringify(newDatas));
+
+    datas.forEach((data) => {
+      drawNotice(data);
+    });
   }
-
-  q = lastDoc
-    ? query(
-        getCategoryRef(category),
-        orderBy("createdAt", "desc"),
-        startAfter(lastDoc),
-        limit(5)
-      )
-    : query(getCategoryRef(category), orderBy("createdAt", "desc"), limit(5));
-
-  const querySnapshot = await getDocs(q);
-  lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
-
-  querySnapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-    drawNotice(data);
-  });
-
   return lastDoc;
 }
 
@@ -101,6 +127,7 @@ categories.forEach((tag) => {
 });
 
 lastDoc = await loadNotices();
+sessionStorage.setItem("lastDoc", JSON.stringify(lastDoc));
 
 function isScrollAtBottom() {
   const scrollTop = document.documentElement.scrollTop;
@@ -113,7 +140,9 @@ function isScrollAtBottom() {
 window.addEventListener("scroll", async () => {
   if (isScrollAtBottom() && !checking && lastDoc) {
     checking = true;
+    lastDoc = sessionStorage.getItem("lastDoc");
     lastDoc = await loadNotices(lastDoc);
+    sessionStorage.setItem("lastDoc", JSON.stringify(lastDoc));
     checking = false;
   }
 });
