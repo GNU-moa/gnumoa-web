@@ -31,21 +31,23 @@ function getCategoryRef(category) {
   return collection(departmentDoc, category);
 }
 
-async function loadNotices(lastDoc) {
-  let q;
-  const cacheKey = `${college}-${department}-${category || "전체"}`;
-  const cachedData = sessionStorage.getItem(cacheKey);
-
-  if (category == null && cachedData) {
+// 캐시 메모리에 있는 데이터 불러오기
+async function loadCachedNotices() {
+  if (cachedData) {
     const datas = JSON.parse(cachedData);
+    const lastDoc = datas.pop();
     datas.forEach((data) => {
       drawNotice(data);
     });
-    console.log("cached data loaded");
-    return null;
+    return lastDoc;
+  } else {
+    lastDoc = await loadNotices();
+    return lastDoc;
   }
+}
 
-  let newDatas;
+async function loadNotices(lastDoc) {
+  let q;
   if (category == null) {
     const latestPostsPromises = categories.map(async (category) => {
       const categoryRef = getCategoryRef(category);
@@ -72,16 +74,7 @@ async function loadNotices(lastDoc) {
     for (const data of flattenedPosts) {
       drawNotice(data);
     }
-
-    newDatas = flattenedPosts;
   } else {
-    if (cachedData) {
-      newDatas = JSON.parse(cachedData);
-      newDatas.forEach((data) => {
-        drawNotice(data);
-      });
-      console.log("cached data loaded");
-    }
     q = lastDoc
       ? query(
           getCategoryRef(category),
@@ -95,9 +88,17 @@ async function loadNotices(lastDoc) {
     lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
 
     const datas = querySnapshot.docs.map((doc) => doc.data());
-    newDatas = cachedData ? newDatas.concat(datas) : datas;
+    if (cachedData) {
+      const cachedDataWithoutLast =
+        typeof cachedData == "object"
+          ? cachedData.slice(0, -1)
+          : JSON.parse(cachedData).slice(0, -1);
+      cachedData = [...cachedDataWithoutLast, ...datas, lastDoc];
+    } else {
+      cachedData = [...datas, lastDoc];
+    }
 
-    sessionStorage.setItem(cacheKey, JSON.stringify(newDatas));
+    sessionStorage.setItem(cacheKey, JSON.stringify(cachedData));
 
     datas.forEach((data) => {
       drawNotice(data);
@@ -115,6 +116,7 @@ let lastDoc = null; // 이전 쿼리에서 마지막으로 가져온 문서
 let checking = false; // 스크롤 이벤트 중복 방지
 
 const departmentDoc = doc(db, `${college}/${department}`);
+const cacheKey = `${college}-${department}-${category || "전체"}`;
 
 // 카테고리 가져오기
 const categories = await getCategories();
@@ -126,8 +128,8 @@ categories.forEach((tag) => {
   drawTag(tag);
 });
 
-lastDoc = await loadNotices();
-sessionStorage.setItem("lastDoc", JSON.stringify(lastDoc));
+let cachedData = sessionStorage.getItem(cacheKey);
+lastDoc = await loadCachedNotices(cacheKey);
 
 function isScrollAtBottom() {
   const scrollTop = document.documentElement.scrollTop;
@@ -140,9 +142,7 @@ function isScrollAtBottom() {
 window.addEventListener("scroll", async () => {
   if (isScrollAtBottom() && !checking && lastDoc) {
     checking = true;
-    lastDoc = sessionStorage.getItem("lastDoc");
     lastDoc = await loadNotices(lastDoc);
-    sessionStorage.setItem("lastDoc", JSON.stringify(lastDoc));
     checking = false;
   }
 });
