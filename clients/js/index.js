@@ -16,7 +16,7 @@ departmentContents.forEach((departmentContent) => {
     } else {
       departmentDetail.style.display = 'none';
       toggleIcon.innerHTML = '<i class="fas fa-caret-down"></i>';
-      department.style.height = '100px';
+      department.style.height = '50px';
       // .department의 height 값을 초기값인 '100px'으로 변경
     }
   });
