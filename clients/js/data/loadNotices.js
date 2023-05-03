@@ -6,6 +6,7 @@ import {
   doc,
   orderBy,
   limit,
+  getDoc,
   getDocs,
   startAfter,
 } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-firestore.js";
@@ -35,75 +36,87 @@ function getCategoryRef(category) {
 async function loadCachedNotices() {
   if (cachedData) {
     const datas = JSON.parse(cachedData);
-    const lastDoc = datas.pop();
+    const lastDocId = parseInt(datas.pop());
     datas.forEach((data) => {
       drawNotice(data);
     });
+    if (lastDoc)
+      lastDoc = await getDoc(
+        doc(db, `${college}/${department}/${category}`, `${lastDocId}`)
+      );
     return lastDoc;
   } else {
-    lastDoc = await loadNotices();
-    return lastDoc;
+    if (category) {
+      lastDoc = await loadNotices();
+      return lastDoc;
+    } else {
+      await loadCategoriesNotices();
+      return null;
+    }
+  }
+}
+
+async function loadCategoriesNotices() {
+  const latestPostsPromises = categories.map(async (category) => {
+    const categoryRef = getCategoryRef(category);
+    const q = query(categoryRef, orderBy("createdAt", "desc"), limit(5));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => doc.data());
+  });
+
+  const results = await Promise.allSettled(latestPostsPromises);
+
+  const flattenedPosts = results.reduce((acc, cur) => {
+    if (cur.status === "fulfilled") {
+      acc.push(...cur.value);
+    }
+    return acc;
+  }, []);
+
+  flattenedPosts.sort(
+    (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
+  );
+
+  sessionStorage.setItem(cacheKey, JSON.stringify(flattenedPosts));
+
+  for (const data of flattenedPosts) {
+    drawNotice(data);
   }
 }
 
 async function loadNotices(lastDoc) {
-  let q;
-  if (category == null) {
-    const latestPostsPromises = categories.map(async (category) => {
-      const categoryRef = getCategoryRef(category);
-      const q = query(categoryRef, orderBy("createdAt", "desc"), limit(5));
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map((doc) => doc.data());
-    });
+  const q = lastDoc
+    ? query(
+        getCategoryRef(category),
+        orderBy("createdAt", "desc"),
+        startAfter(lastDoc),
+        limit(5)
+      )
+    : query(getCategoryRef(category), orderBy("createdAt", "desc"), limit(5));
 
-    const results = await Promise.allSettled(latestPostsPromises);
+  const querySnapshot = await getDocs(q);
+  lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
 
-    const flattenedPosts = results.reduce((acc, cur) => {
-      if (cur.status === "fulfilled") {
-        acc.push(...cur.value);
-      }
-      return acc;
-    }, []);
-
-    flattenedPosts.sort(
-      (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
-    );
-
-    sessionStorage.setItem(cacheKey, JSON.stringify(flattenedPosts));
-
-    for (const data of flattenedPosts) {
-      drawNotice(data);
-    }
+  const datas = querySnapshot.docs.map((doc) => doc.data());
+  if (cachedData) {
+    const cachedDataWithoutLast =
+      typeof cachedData == "object"
+        ? cachedData.slice(0, -1)
+        : JSON.parse(cachedData).slice(0, -1);
+    cachedData = [
+      ...cachedDataWithoutLast,
+      ...datas,
+      lastDoc ? lastDoc.id : null,
+    ];
   } else {
-    q = lastDoc
-      ? query(
-          getCategoryRef(category),
-          orderBy("createdAt", "desc"),
-          startAfter(lastDoc),
-          limit(5)
-        )
-      : query(getCategoryRef(category), orderBy("createdAt", "desc"), limit(5));
-
-    const querySnapshot = await getDocs(q);
-    lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
-
-    const datas = querySnapshot.docs.map((doc) => doc.data());
-    if (cachedData) {
-      const cachedDataWithoutLast =
-        typeof cachedData == "object"
-          ? cachedData.slice(0, -1)
-          : JSON.parse(cachedData).slice(0, -1);
-      cachedData = [...cachedDataWithoutLast, ...datas, lastDoc];
-    } else {
-      cachedData = [...datas, lastDoc];
-    }
-
-    sessionStorage.setItem(cacheKey, JSON.stringify(cachedData));
-
-    datas.forEach((data) => {
-      drawNotice(data);
-    });
+    cachedData = [...datas, lastDoc ? lastDoc.id : null];
   }
+
+  sessionStorage.setItem(cacheKey, JSON.stringify(cachedData));
+
+  datas.forEach((data) => {
+    drawNotice(data);
+  });
   return lastDoc;
 }
 
