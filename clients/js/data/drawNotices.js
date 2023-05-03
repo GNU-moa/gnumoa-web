@@ -10,7 +10,7 @@ export function drawNotice(data) {
   const major = data.major;
   const category = data.category;
   const title = data.title;
-  let content = data.context[0] || null;
+  let content = data.context[0];
   // content 길이가 일정 이상이면 자르기
   if (content.length > 10) {
     content = content.substring(0, 60) + "...";

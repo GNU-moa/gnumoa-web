@@ -40,11 +40,10 @@ async function loadCachedNotices() {
     datas.forEach((data) => {
       drawNotice(data);
     });
-    if (lastDoc)
-      lastDoc = await getDoc(
-        doc(db, `${college}/${department}/${category}`, `${lastDocId}`)
-      );
-    return lastDoc;
+    lastDoc = await getDoc(
+      doc(db, `${college}/${department}/${category}`, `${lastDocId}`)
+    );
+    return lastDoc.exists() ? lastDoc : null;
   } else {
     if (category) {
       lastDoc = await loadNotices();
@@ -128,18 +127,20 @@ let category = queryParams.get("category");
 let lastDoc = null; // 이전 쿼리에서 마지막으로 가져온 문서
 let checking = false; // 스크롤 이벤트 중복 방지
 
-const departmentDoc = doc(db, `${college}/${department}`);
-const cacheKey = `${college}-${department}-${category || "전체"}`;
-
 // 카테고리 가져오기
 const categories = await getCategories();
 
 if (categories.length > 1) {
   drawTag("전체");
+  categories.forEach((tag) => {
+    drawTag(tag);
+  });
+} else if (categories.length == 1) {
+  category = categories[0];
 }
-categories.forEach((tag) => {
-  drawTag(tag);
-});
+
+const departmentDoc = doc(db, `${college}/${department}`);
+const cacheKey = `${college}-${department}-${category || "전체"}`;
 
 let cachedData = sessionStorage.getItem(cacheKey);
 lastDoc = await loadCachedNotices(cacheKey);
