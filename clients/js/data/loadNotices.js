@@ -54,47 +54,11 @@ async function loadCategoriesNotices() {
     (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
   );
 
-  localStorage.setItem(cacheKey, JSON.stringify(flattenedPosts));
+  sessionStorage.setItem(cacheKey, JSON.stringify(flattenedPosts));
 
   for (const data of flattenedPosts) {
     drawNotice(data);
   }
-}
-
-async function loadNoticesByLastDoc(lastDoc) {
-  const q = lastDoc
-    ? query(
-        getCategoryRef(category),
-        orderBy("createdAt", "desc"),
-        startAfter(lastDoc),
-        limit(10)
-      )
-    : query(getCategoryRef(category), orderBy("createdAt", "desc"), limit(10));
-
-  const querySnapshot = await getDocs(q);
-  lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
-
-  const datas = querySnapshot.docs.map((doc) => doc.data());
-  if (cachedData) {
-    const cachedDataWithoutLast =
-      typeof cachedData == "object"
-        ? cachedData.slice(0, -1)
-        : JSON.parse(cachedData).slice(0, -1);
-    cachedData = [
-      ...cachedDataWithoutLast,
-      ...datas,
-      lastDoc ? lastDoc.id : null,
-    ];
-  } else {
-    cachedData = [...datas, lastDoc ? lastDoc.id : null];
-  }
-
-  localStorage.setItem(cacheKey, JSON.stringify(cachedData));
-
-  datas.forEach((data) => {
-    drawNotice(data);
-  });
-  return lastDoc;
 }
 
 // URL 파라미터 가져오기
@@ -123,47 +87,52 @@ async function getDocObject(docId) {
   );
 }
 
-async function loadNotices(cachedData, startDoc, lastDoc) {
-  const options = {
-    collection: getCategoryRef(category),
-    orderBy: ["createdAt", "desc"],
-  };
-  if (startDoc) {
-    options.endBefore = startDoc;
+async function loadNotices(options) {
+  let q = query(getCategoryRef(category), orderBy("createdAt", "desc"));
+
+  if (options.lastDoc) {
+    q = query(q, startAfter(options.lastDoc), limit(10));
+  } else if (options.startDoc) {
+    q = query(q, endBefore(options.startDoc));
   } else {
-    options.limit = 10;
-    if (lastDoc) {
-      options.startAfter = lastDoc;
-    }
+    q = query(q, limit(10));
   }
 
-  const q = query(
-    options.collection,
-    orderBy(...options.orderBy),
-    limit(options.limit),
-    startAfter(options.startAfter)
-  );
   const querySnapshot = await getDocs(q);
-  lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
 
-  const datas = querySnapshot.docs.map((doc) => doc.data());
+  const datas = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
   return datas;
 }
 
 const departmentDoc = doc(db, `${college}/${department}`);
 const cacheKey = `${college}-${department}-${category || "전체"}`;
-let cachedData = localStorage.getItem(cacheKey);
+let cachedData = sessionStorage.getItem(cacheKey);
 let datas = [];
+let options = {};
 
 if (cachedData) {
   cachedData = JSON.parse(cachedData);
-  //firstDoc = await getDocObject(cachedData.shift());
-  lastDoc = await getDocObject(cachedData.pop());
-  const newDatas = await loadNotices(cachedData, null, lastDoc);
-  datas = newDatas;
-  datas.forEach((data) => {
-    drawNotice(data);
-  });
+  const startDocId = cachedData[0]["id"];
+  const startDoc = await getDocObject(startDocId);
+  options = { startDoc };
+  const newDatas = await loadNotices(options);
+  datas = [...newDatas, ...cachedData];
+} else {
+  datas = await loadNotices(options);
+}
+
+// 데이터 그리기
+datas.forEach((data) => {
+  drawNotice(data);
+});
+
+// 데이터 스토리지 캐싱
+if (datas.length > 0) {
+  sessionStorage.setItem(cacheKey, JSON.stringify(datas));
 }
 
 function isScrollAtBottom() {
@@ -175,10 +144,23 @@ function isScrollAtBottom() {
 }
 
 window.addEventListener("scroll", async () => {
-  if (isScrollAtBottom() && !checking && lastDoc) {
+  if (isScrollAtBottom() && !checking) {
     checking = true;
-    const lastDoc = await getDocObject(cachedData.pop());
-    datas = await loadNotices(cachedData, null, lastDoc);
+    const lastDocId = datas[datas.length - 1]["id"];
+    lastDoc = await getDocObject(lastDocId);
+    if (lastDoc.exists()) {
+      options = { lastDoc };
+      const newDatas = await loadNotices(options);
+      // 데이터 그리기
+      newDatas.forEach((data) => {
+        drawNotice(data);
+      });
+      datas = [...datas, ...newDatas];
+      // 데이터 스토리지 캐싱
+      if (datas.length > 0) {
+        sessionStorage.setItem(cacheKey, JSON.stringify(datas));
+      }
+    }
     checking = false;
   }
 });
