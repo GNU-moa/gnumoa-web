@@ -8,6 +8,7 @@ import {
   limit,
   getDoc,
   getDocs,
+  endBefore,
   startAfter,
 } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-firestore.js";
 import { httpsCallable } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-functions.js";
@@ -32,29 +33,6 @@ function getCategoryRef(category) {
   return collection(departmentDoc, category);
 }
 
-// 캐시 메모리에 있는 데이터 불러오기
-async function loadCachedNotices() {
-  if (cachedData) {
-    const datas = JSON.parse(cachedData);
-    const lastDocId = parseInt(datas.pop());
-    datas.forEach((data) => {
-      drawNotice(data);
-    });
-    lastDoc = await getDoc(
-      doc(db, `${college}/${department}/${category}`, `${lastDocId}`)
-    );
-    return lastDoc.exists() ? lastDoc : null;
-  } else {
-    if (category) {
-      lastDoc = await loadNotices();
-      return lastDoc;
-    } else {
-      await loadCategoriesNotices();
-      return null;
-    }
-  }
-}
-
 async function loadCategoriesNotices() {
   const latestPostsPromises = categories.map(async (category) => {
     const categoryRef = getCategoryRef(category);
@@ -76,22 +54,22 @@ async function loadCategoriesNotices() {
     (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
   );
 
-  sessionStorage.setItem(cacheKey, JSON.stringify(flattenedPosts));
+  localStorage.setItem(cacheKey, JSON.stringify(flattenedPosts));
 
   for (const data of flattenedPosts) {
     drawNotice(data);
   }
 }
 
-async function loadNotices(lastDoc) {
+async function loadNoticesByLastDoc(lastDoc) {
   const q = lastDoc
     ? query(
         getCategoryRef(category),
         orderBy("createdAt", "desc"),
         startAfter(lastDoc),
-        limit(5)
+        limit(10)
       )
-    : query(getCategoryRef(category), orderBy("createdAt", "desc"), limit(5));
+    : query(getCategoryRef(category), orderBy("createdAt", "desc"), limit(10));
 
   const querySnapshot = await getDocs(q);
   lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -111,7 +89,7 @@ async function loadNotices(lastDoc) {
     cachedData = [...datas, lastDoc ? lastDoc.id : null];
   }
 
-  sessionStorage.setItem(cacheKey, JSON.stringify(cachedData));
+  localStorage.setItem(cacheKey, JSON.stringify(cachedData));
 
   datas.forEach((data) => {
     drawNotice(data);
@@ -124,7 +102,7 @@ const college = queryParams.get("college");
 const department = queryParams.get("department");
 let category = queryParams.get("category");
 
-let lastDoc = null; // 이전 쿼리에서 마지막으로 가져온 문서
+let lastDoc;
 let checking = false; // 스크롤 이벤트 중복 방지
 
 // 카테고리 가져오기
@@ -139,11 +117,54 @@ if (categories.length > 1) {
   category = categories[0];
 }
 
+async function getDocObject(docId) {
+  return await getDoc(
+    doc(db, `${college}/${department}/${category}`, `${docId}`)
+  );
+}
+
+async function loadNotices(cachedData, startDoc, lastDoc) {
+  const options = {
+    collection: getCategoryRef(category),
+    orderBy: ["createdAt", "desc"],
+  };
+  if (startDoc) {
+    options.endBefore = startDoc;
+  } else {
+    options.limit = 10;
+    if (lastDoc) {
+      options.startAfter = lastDoc;
+    }
+  }
+
+  const q = query(
+    options.collection,
+    orderBy(...options.orderBy),
+    limit(options.limit),
+    startAfter(options.startAfter)
+  );
+  const querySnapshot = await getDocs(q);
+  lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+  const datas = querySnapshot.docs.map((doc) => doc.data());
+  return datas;
+}
+
 const departmentDoc = doc(db, `${college}/${department}`);
 const cacheKey = `${college}-${department}-${category || "전체"}`;
+let cachedData = localStorage.getItem(cacheKey);
+let datas = [];
 
-let cachedData = sessionStorage.getItem(cacheKey);
-lastDoc = await loadCachedNotices(cacheKey);
+if (cachedData) {
+  cachedData = JSON.parse(cachedData);
+  //firstDoc = await getDocObject(cachedData.shift());
+  lastDoc = await getDocObject(cachedData.pop());
+  const newDatas = await loadNotices(cachedData, null, lastDoc);
+  datas = newDatas;
+  datas.forEach((data) => {
+    drawNotice(data);
+  });
+}
 
 function isScrollAtBottom() {
   const scrollTop = document.documentElement.scrollTop;
@@ -156,7 +177,8 @@ function isScrollAtBottom() {
 window.addEventListener("scroll", async () => {
   if (isScrollAtBottom() && !checking && lastDoc) {
     checking = true;
-    lastDoc = await loadNotices(lastDoc);
+    const lastDoc = await getDocObject(cachedData.pop());
+    datas = await loadNotices(cachedData, null, lastDoc);
     checking = false;
   }
 });
