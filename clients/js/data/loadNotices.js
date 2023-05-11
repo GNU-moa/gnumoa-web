@@ -33,34 +33,6 @@ function getCategoryRef(category) {
   return collection(departmentDoc, category);
 }
 
-async function loadCategoriesNotices() {
-  const latestPostsPromises = categories.map(async (category) => {
-    const categoryRef = getCategoryRef(category);
-    const q = query(categoryRef, orderBy("createdAt", "desc"), limit(5));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => doc.data());
-  });
-
-  const results = await Promise.allSettled(latestPostsPromises);
-
-  const flattenedPosts = results.reduce((acc, cur) => {
-    if (cur.status === "fulfilled") {
-      acc.push(...cur.value);
-    }
-    return acc;
-  }, []);
-
-  flattenedPosts.sort(
-    (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
-  );
-
-  sessionStorage.setItem(cacheKey, JSON.stringify(flattenedPosts));
-
-  for (const data of flattenedPosts) {
-    drawNotice(data);
-  }
-}
-
 // URL 파라미터 가져오기
 const college = queryParams.get("college");
 const department = queryParams.get("department");
@@ -88,7 +60,8 @@ async function getDocObject(docId) {
 }
 
 async function loadNotices(options) {
-  let q = query(getCategoryRef(category), orderBy("createdAt", "desc"));
+  const noticeCategory = options.category || category;
+  let q = query(getCategoryRef(noticeCategory), orderBy("createdAt", "desc"));
 
   if (options.lastDoc) {
     q = query(q, startAfter(options.lastDoc), limit(10));
@@ -108,21 +81,50 @@ async function loadNotices(options) {
   return datas;
 }
 
+async function loadCategoriesNotices() {
+  const latestPostsPromises = categories.map(async (category) => {
+    options = { category };
+    const datas = await loadNotices(options);
+    return datas;
+  });
+
+  const results = await Promise.allSettled(latestPostsPromises);
+
+  const flattenedPosts = results.reduce((acc, cur) => {
+    if (cur.status === "fulfilled") {
+      acc.push(...cur.value);
+    }
+    return acc;
+  }, []);
+
+  flattenedPosts.sort(
+    (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
+  );
+
+  return flattenedPosts;
+}
+
 const departmentDoc = doc(db, `${college}/${department}`);
 const cacheKey = `${college}-${department}-${category || "전체"}`;
 let cachedData = sessionStorage.getItem(cacheKey);
 let datas = [];
 let options = {};
 
-if (cachedData) {
-  cachedData = JSON.parse(cachedData);
-  const startDocId = cachedData[0]["id"];
-  const startDoc = await getDocObject(startDocId);
-  options = { startDoc };
-  const newDatas = await loadNotices(options);
-  datas = [...newDatas, ...cachedData];
+if (category === null) {
+  datas = await loadCategoriesNotices();
 } else {
-  datas = await loadNotices(options);
+  if (cachedData) {
+    cachedData = JSON.parse(cachedData);
+    const startDocId = cachedData[0]?.id;
+    if (startDocId) {
+      const startDoc = await getDocObject(startDocId);
+      options = { startDoc };
+    }
+    const newDatas = await loadNotices(options);
+    datas = [...newDatas, ...cachedData];
+  } else {
+    datas = await loadNotices(options);
+  }
 }
 
 // 데이터 그리기
