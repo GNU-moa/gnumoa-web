@@ -88,6 +88,7 @@ body {
   padding: 10px;
 }
 
+/* 각 단과대학 공지사항 박스 */
 .notice-list {
   position: relative;
   height: 150px;
@@ -159,12 +160,7 @@ body {
 }
 
 .department_content {
-  /* position: absolute; */
-  /* font-size: 20px;
-  top: 10px;
-  left: 130px;
-  font-weight: 600;
-  text-align: center; */
+
   text-align: center;
   margin: 0;
   padding: 10px 0;
@@ -188,10 +184,34 @@ a{
   cursor: pointer;
 }
 
-a:hover{
+/*세부학과(독어독문학과)에 마우스 hover했을 때 색 변하는거*/
+.department_detail a:hover{
+  color: #1472ff;
+}
+
+/*title에 마우스를 hover했을 때 색 변하는거*/
+.notice-list-title:hover{
   color: #1472ff;
 }
 
 .toglle_icon{
   cursor: pointer;
 }
+
+.heart-icon {
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
+  font-size: 20px;
+  color: black;
+}
+
+.heart-icon{
+  color: gray;
+}
+
+/*일단 하트에 hover됐을 때 빨간색으로 변하도록 해뒀습니다.*/
+.heart-icon:hover {
+  color: red;
+}
+

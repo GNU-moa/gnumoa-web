@@ -3,7 +3,7 @@ import { Timestamp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-fi
 const entire = document.querySelector(".entire");
 
 export function drawNotice(data) {
-  const noticeList = document.createElement("a");
+  const noticeList = document.createElement("div");
   noticeList.classList.add("notice-list");
 
   // 데이터 추가
@@ -11,6 +11,7 @@ export function drawNotice(data) {
   const category = data.category;
   const title = data.title;
   let content = data.context[0];
+  
   // content 길이가 일정 이상이면 자르기
   if (content.length > 10) {
     content = content.substring(0, 60) + "...";
@@ -42,15 +43,32 @@ export function drawNotice(data) {
   const dateText = document.createTextNode(isoString);
   dateEl.appendChild(dateText);
 
-  noticeList.appendChild(tagEl);
-  noticeList.appendChild(titleEl);
-  noticeList.appendChild(contentEl);
-  noticeList.appendChild(dateEl);
+  // 하트 아이콘
+  const heartEl = document.createElement("div");
+  heartEl.classList.add("heart-icon");
+  const heartIcon = document.createElement("i");
+  heartIcon.classList.add("fa-regular", "fa-heart");
+  heartEl.appendChild(heartIcon);
+
+  heartEl.addEventListener("click", (event) => {
+    event.preventDefault(); // 이벤트의 기본 동작 중단
+    // 여기에 하트 아이콘 클릭 시 동작할 코드를 추가하면 됨
+  });
+
+  const noticeLink = document.createElement("a");
+  if (data.baseUrl) {
+    noticeLink.href = data.baseUrl; // href 속성에 data.baseUrl 할당
+    noticeLink.target = "_blank"; // 새 창에서 열기
+  }
+  noticeLink.appendChild(heartEl);
+  noticeLink.appendChild(tagEl);
+  noticeLink.appendChild(titleEl);
+  noticeLink.appendChild(contentEl);
+  noticeLink.appendChild(dateEl);
+
+  noticeList.appendChild(noticeLink);
 
   // 부모 요소에 생성한 요소 추가
   entire.appendChild(noticeList);
-  if (data.baseUrl) {
-    noticeList.href = data.baseUrl; // href 속성에 data.baseUrl 할당
-    noticeList.target = "_blank"; // 새 창에서 열기
-  }
 }
+
