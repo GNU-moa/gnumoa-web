@@ -10,8 +10,21 @@ import {
   getDocs,
   endBefore,
   startAfter,
+  where,
 } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-firestore.js";
 import { httpsCallable } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-functions.js";
+
+// URL 파라미터 가져오기
+const college = queryParams.get("college");
+const department = queryParams.get("department");
+let category = queryParams.get("category");
+const keyword = queryParams.get("keyword");
+
+let lastDoc;
+let checking = false; // 스크롤 이벤트 중복 방지
+
+// 카테고리 가져오기
+const categories = await getCategories();
 
 async function getCategories() {
   const listSubcollections = httpsCallable(functions, "listSubcollections");
@@ -33,17 +46,6 @@ function getCategoryRef(category) {
   return collection(departmentDoc, category);
 }
 
-// URL 파라미터 가져오기
-const college = queryParams.get("college");
-const department = queryParams.get("department");
-let category = queryParams.get("category");
-
-let lastDoc;
-let checking = false; // 스크롤 이벤트 중복 방지
-
-// 카테고리 가져오기
-const categories = await getCategories();
-
 if (categories.length > 1) {
   drawTag("전체");
   categories.forEach((tag) => {
@@ -61,14 +63,27 @@ async function getDocObject(docId) {
 
 async function loadNotices(options) {
   const noticeCategory = options.category || category;
-  let q = query(getCategoryRef(noticeCategory), orderBy("createdAt", "desc"));
+  let q = query(getCategoryRef(noticeCategory));
 
   if (options.lastDoc) {
-    q = query(q, startAfter(options.lastDoc), limit(10));
+    q = query(
+      q,
+      orderBy("createdAt", "desc"),
+      startAfter(options.lastDoc),
+      limit(10)
+    );
   } else if (options.startDoc) {
-    q = query(q, endBefore(options.startDoc));
+    q = query(q, orderBy("createdAt", "desc"), endBefore(options.startDoc));
   } else {
-    q = query(q, limit(10));
+    if (options.keyword) {
+      q = query(
+        q,
+        where("title", ">=", options.keyword),
+        where("title", "<=", options.keyword + "~")
+      );
+    } else {
+      q = query(q, orderBy("createdAt", "desc"), limit(10));
+    }
   }
 
   const querySnapshot = await getDocs(q);
@@ -110,20 +125,25 @@ let cachedData = sessionStorage.getItem(cacheKey);
 let datas = [];
 let options = {};
 
-if (category === null) {
-  datas = await loadCategoriesNotices();
+if (keyword) {
+  options = { keyword };
+  datas = await loadNotices(options);
 } else {
-  if (cachedData) {
-    cachedData = JSON.parse(cachedData);
-    const startDocId = cachedData[0]?.id;
-    if (startDocId) {
-      const startDoc = await getDocObject(startDocId);
-      options = { startDoc };
-    }
-    const newDatas = await loadNotices(options);
-    datas = [...newDatas, ...cachedData];
+  if (category === null) {
+    datas = await loadCategoriesNotices();
   } else {
-    datas = await loadNotices(options);
+    if (cachedData) {
+      cachedData = JSON.parse(cachedData);
+      const startDocId = cachedData[0]?.id;
+      if (startDocId) {
+        const startDoc = await getDocObject(startDocId);
+        options = { startDoc };
+      }
+      const newDatas = await loadNotices(options);
+      datas = [...newDatas, ...cachedData];
+    } else {
+      datas = await loadNotices(options);
+    }
   }
 }
 
