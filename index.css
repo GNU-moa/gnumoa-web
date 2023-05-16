@@ -8,6 +8,7 @@
 
 body {
   width: 100%;
+  padding: 10px;
   background-color: #eff0f3;
 }
 
@@ -53,6 +54,13 @@ body {
   align-items: center;
 }
 
+/* 공지사항 */
+.entire {
+  margin-top: 50px;
+  transition: all ease-out 0.3s;
+  padding: 10px;
+}
+
 .search-container {
   display: flex; /* 부모 요소에 flex 속성 추가 */
   align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
@@ -81,13 +89,6 @@ body {
   height: 40px;
 }
 
-/* 공지사항 */
-.entire {
-  margin-top: 50px;
-  transition: all ease-out 0.3s;
-  padding: 10px;
-}
-
 /* 각 단과대학 공지사항 박스 */
 .notice-list {
   position: relative;
@@ -96,7 +97,7 @@ body {
   margin-bottom: 40px;
   background-color: white;
   border-radius: 20px;
-  box-shadow: 10px 10px 30px rgba(141, 141, 141, 0.3);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 
@@ -128,48 +129,51 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
+
   flex-wrap: wrap;
-  gap: 40px;
+  gap: 20px;
   opacity: 1;
-  margin-top: 20px;
   max-width: 900px;
 }
 
 /* 각 대학 박스 */
 .department {
   position: relative;
-  bottom: -50px;
-  text-align: center;
   width: 100%;
-  height: 50px;
   background-color: white;
-  border-radius: 20px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   max-width: 370px;
   display: block;
+  padding: 15px;
+  transform: scale(1);
+  transition: transform 0.2s ease-in-out;
 }
 
-.toglle_icon {
-  position: absolute;
-  top: 6px;
-  right: 30px;
-  font-size: 25px;
+.department:hover {
+  transform: scale(1.02);
+}
+
+.department_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggle_icon {
+  font-size: 20px;
 }
 
 .department_content {
-  text-align: center;
-  margin: 0;
-  padding: 10px 0;
-  font-weight: 800;
+  font-weight: 600;
   font-size: 20px;
 }
 
 .department_detail {
   /* position: absolute; */
-  font-size: 20px;
-  top: 60px;
-  left: 65px;
+  margin-top: 13px;
+  font-size: 16px;
 }
 
 .department_detail {
@@ -189,10 +193,6 @@ a {
 /*title에 마우스를 hover했을 때 색 변하는거*/
 .notice-list-title:hover {
   color: #1472ff;
-}
-
-.toglle_icon {
-  cursor: pointer;
 }
 
 .heart-icon {

@@ -3,7 +3,7 @@ import { noticeLikeEvent } from "./likeEvent.js";
 
 const entire = document.querySelector(".entire");
 let cachedDatas = localStorage.getItem("like-notices");
-if (cachedDatas) cachedDatas = JSON.parse(cachedDatas);
+cachedDatas = JSON.parse(cachedDatas);
 
 export function drawNotice(data) {
   const noticeList = document.createElement("div");
@@ -50,11 +50,12 @@ export function drawNotice(data) {
   const heartEl = document.createElement("div");
   heartEl.classList.add("heart-icon");
   const heartIcon = document.createElement("i");
-  const isExist = cachedDatas.findIndex(
-    (cachedData) => cachedData.id === data.id
-  );
-  if (isExist == -1) heartIcon.classList.add("fa-regular", "fa-heart");
-  else heartIcon.classList.add("fa-solid", "fa-heart");
+  let isExist;
+  if (cachedDatas) {
+    isExist = cachedDatas.findIndex((cachedData) => cachedData.id === data.id);
+  }
+  if (isExist !== -1) heartIcon.classList.add("fa-solid", "fa-heart");
+  else heartIcon.classList.add("fa-regular", "fa-heart");
   heartEl.appendChild(heartIcon);
 
   heartEl.addEventListener("click", (event) => {

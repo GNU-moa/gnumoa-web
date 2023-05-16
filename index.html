@@ -5,17 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script
-      src="https://kit.fontawesome.com/5188df6d79.js"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://kit.fontawesome.com/5188df6d79.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="index.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div class="wrapper">
@@ -27,21 +21,21 @@
         </span>
       </div>
 
-      
       <main class="main-container">
         <div class="search-container">
-          <input type="text" placeholder="검색어를 입력하세요." />
+          <input type="text" placeholder="학과를 입력하세요." />
           <button type="submit">검색</button>
         </div>
         <div class="tag-container"></div>
-
         <!-- 학과 전체 박스 -->
         <div class="department_entire">
           <div class="department">
-            <p class="department_content">인문대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">인문대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
               <li><a href="./department.html?college=inmun&department=english">영어영문학부 영어영문학전공</a></li>
               <li><a href="./department.html?college=inmun&department=e_language">영어영문학부 영어전공</a></li>
@@ -55,14 +49,15 @@
               <li><a href="./department.html?college=inmun&department=sophia">철학과</a></li>
               <li><a href="./department.html?college=inmun&department=hanmun">한문학과</a></li>
             </ul>
-            </p>
           </div>
 
           <div class="department">
-            <p class="department_content">사회과학대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">사회과학대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
               <li><a href="./department.html?college=css&department=economics">경제학부</a></li>
               <li><a href="">사회복지학부</a></li>
@@ -75,12 +70,14 @@
           </div>
 
           <div class="department">
-            <p class="department_content">자연과학대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">자연과학대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
-              <li><a href="./department.html?college=cns&department=ls">생명과학부? 생명공학부?</a></li> 
+              <li><a href="./department.html?college=cns&department=ls">생명과학부? 생명공학부?</a></li>
               <li><a href="./department.html?college=cns&department=physics">물리학과</a></li>
               <li><a href="./department.html?college=cns&department=math">수학과</a></li>
               <li><a href="./department.html?college=cns&department=foodnutri">식품영양학과</a></li>
@@ -96,10 +93,12 @@
           </div>
 
           <div class="department">
-            <p class="department_content">경영대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">경영대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
               <li><a href="">경영학부</a></li>
               <li><a href="">국제통상학부</a></li>
@@ -111,10 +110,12 @@
           </div>
 
           <div class="department">
-            <p class="department_content">공과대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">공과대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
               <li><a href="">건축공학부 건축공학전공</a></li>
               <li><a href="">건축공학부 건축시스템공학전공</a></li>
@@ -136,10 +137,12 @@
           </div>
 
           <div class="department">
-            <p class="department_content">농업생명과학대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">농업생명과학대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
               <li><a href="">식품자원경제학과</a></li>
               <li><a href="">동물생명융합학부</a></li>
@@ -158,20 +161,12 @@
           </div>
 
           <div class="department">
-            <p class="department_content">법과대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
-            <ul class="department_detail">
-              <li><a href="./department.html?college=law&department=law">법학과</a></li>
-            </ul>
-          </div>
-
-          <div class="department">
-            <p class="department_content">사범대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">사범대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
               <li><a href="">교육학과</a></li>
               <li><a href="./department.html?college=sadae&department=korlan">국어교육과</a></li>
@@ -193,41 +188,30 @@
           </div>
 
           <div class="department">
-            <p class="department_content">수의과대학??????</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">법과/수의과/의과/약학/간호대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
+              <li><a href="./department.html?college=law&department=law">법학과</a></li>
               <li><a href="">수의학과</a></li>
               <li><a href="">수의예과</a></li>
-            </ul>
-          </div>
-
-          <div class="department">
-            <p class="department_content">의과대학?????</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
-            <ul class="department_detail">
               <li><a href="">의학과</a></li>
               <li><a href="">의예과</a></li>
+              <li><a href="">간호대학</a></li>
+              <li><a href="./department.html?college=pharm&department=pharm">약학대학</a></li>
             </ul>
           </div>
 
           <div class="department">
-            <p class="department_content">간호대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
-            <ul class="department_detail">
-              <li><a href="">간호대학</a></li>
-          </div>
-
-          <div class="department">
-            <p class="department_content">해양과학대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">해양과학대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
               <li><a href="./department.html?college=marsci&department=fba">해양수산경영학과</a></li>
               <li><a href="">미래산업융합학과</a></li>
@@ -244,30 +228,12 @@
           </div>
 
           <div class="department">
-            <p class="department_content">약학대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
-            <ul class="department_detail">
-              <li><a href="./department.html?college=pharm&department=pharm">약학대학</a></li>
-            </ul>
-          </div>
-
-          <div class="department">
-            <p class="department_content">본부대학Ⅰ</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
-            <ul class="department_detail">
-              <li><a href="./department.html?college=mce&department=mce">기계융합공학과</a></li>
-            </ul>
-          </div>
-
-          <div class="department">
-            <p class="department_content">건설환경공과대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">건설환경공과대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
               <li><a href="./department.html?college=cee&department=civilinfra">건설시스템공학과</a></li>
               <li><a href="./department.html?college=cee&department=im">인테리어재료공학과</a></li>
@@ -278,10 +244,12 @@
           </div>
 
           <div class="department">
-            <p class="department_content">융합기술공과대학</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">융합기술공과대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
               <li><a href="./department.html?college=cte&department=mm">기계소재융합공학부</a></li>
               <li><a href="./department.html?college=cte&department=mecha">메카트로닉스공학부</a></li>
@@ -292,22 +260,20 @@
           </div>
 
           <div class="department">
-            <p class="department_content">본부대학Ⅱ</p>
-            <p class="toglle_icon">
-              <i class="fas fa-caret-down"></i>
-            </p>
+            <div class="department_header">
+              <p class="department_content">본부대학</p>
+              <p class="toggle_icon">
+                <i class="fas fa-caret-down"></i>
+              </p>
+            </div>
             <ul class="department_detail">
+              <li><a href="./department.html?college=mce&department=mce">기계융합공학과</a></li>
               <li><a href="./department.html?college=healthcare&healthcare">휴먼헬스케어학과</a></li>
             </ul>
           </div>
-
-          
         </div>
-        <br><br>
-        <br>
-        
-      </main class="container">
+      </main>
     </div>
-    <script src="clients/js/index.js"></script>
+    <script src="clients/js/departmentMenu.js"></script>
   </body>
 </html>
