@@ -1,5 +1,3 @@
-
-
 // const departmentContents = document.querySelectorAll('.department_content');
 
 // departmentContents.forEach((departmentContent) => {
@@ -23,24 +21,24 @@
 // });
 
 // 학과 토글
-const departmentContents = document.querySelectorAll('.department_content');
+const departmentContents = document.querySelectorAll(".department_content");
 
 departmentContents.forEach((departmentContent) => {
   const toggleIcon = departmentContent.nextElementSibling;
   const department = departmentContent.parentElement;
-  const departmentDetail = department.querySelector('.department_detail');
+  const departmentDetail = department.querySelector(".department_detail");
   let isExpanded = false; // 초기 상태 설정
 
-  toggleIcon.addEventListener('click', () => {
+  toggleIcon.addEventListener("click", () => {
     if (!isExpanded) {
-      departmentDetail.style.display = 'block';
+      departmentDetail.style.display = "block";
       toggleIcon.innerHTML = '<i class="fas fa-caret-up"></i>';
-      department.style.height = 'auto';
+      department.style.height = "auto";
       isExpanded = true;
     } else {
-      departmentDetail.style.display = 'none';
+      departmentDetail.style.display = "none";
       toggleIcon.innerHTML = '<i class="fas fa-caret-down"></i>';
-      department.style.height = '50px';
+      department.style.height = "50px";
       isExpanded = false;
     }
   });

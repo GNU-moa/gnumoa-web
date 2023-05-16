@@ -64,10 +64,10 @@ body {
   border: 1px solid grey;
   border-radius: 20px;
   font-size: 16px;
-  text-align:left;
+  text-align: left;
   width: 330px;
   height: 43px;
-  flex:1;
+  flex: 1;
 }
 
 .search-container button[type="submit"] {
@@ -91,7 +91,6 @@ body {
 /* 각 단과대학 공지사항 박스 */
 .notice-list {
   position: relative;
-  height: 150px;
   display: block;
   padding: 20px 40px;
   margin-bottom: 40px;
@@ -119,8 +118,7 @@ body {
 }
 
 .notice-list-date {
-  position: absolute;
-  bottom: 10px;
+  margin: 10px 0 0 0;
   font-size: 12px;
   color: grey;
 }
@@ -160,7 +158,6 @@ body {
 }
 
 .department_content {
-
   text-align: center;
   margin: 0;
   padding: 10px 0;
@@ -168,7 +165,7 @@ body {
   font-size: 20px;
 }
 
-.department_detail{
+.department_detail {
   /* position: absolute; */
   font-size: 20px;
   top: 60px;
@@ -180,21 +177,21 @@ body {
   list-style-type: none;
 }
 
-a{
+a {
   cursor: pointer;
 }
 
 /*세부학과(독어독문학과)에 마우스 hover했을 때 색 변하는거*/
-.department_detail a:hover{
+.department_detail a:hover {
   color: #1472ff;
 }
 
 /*title에 마우스를 hover했을 때 색 변하는거*/
-.notice-list-title:hover{
+.notice-list-title:hover {
   color: #1472ff;
 }
 
-.toglle_icon{
+.toglle_icon {
   cursor: pointer;
 }
 
@@ -206,7 +203,7 @@ a{
   color: black;
 }
 
-.heart-icon{
+.heart-icon {
   color: gray;
 }
 
@@ -214,4 +211,3 @@ a{
 .heart-icon:hover {
   color: red;
 }
-

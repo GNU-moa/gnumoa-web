@@ -1,6 +1,9 @@
 import { Timestamp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-firestore.js";
+import { noticeLikeEvent } from "./likeEvent.js";
 
 const entire = document.querySelector(".entire");
+let cachedDatas = localStorage.getItem("like-notices");
+if (cachedDatas) cachedDatas = JSON.parse(cachedDatas);
 
 export function drawNotice(data) {
   const noticeList = document.createElement("div");
@@ -11,7 +14,7 @@ export function drawNotice(data) {
   const category = data.category;
   const title = data.title;
   let content = data.context[0];
-  
+
   // content 길이가 일정 이상이면 자르기
   if (content.length > 10) {
     content = content.substring(0, 60) + "...";
@@ -47,12 +50,18 @@ export function drawNotice(data) {
   const heartEl = document.createElement("div");
   heartEl.classList.add("heart-icon");
   const heartIcon = document.createElement("i");
-  heartIcon.classList.add("fa-regular", "fa-heart");
+  const isExist = cachedDatas.findIndex(
+    (cachedData) => cachedData.id === data.id
+  );
+  if (isExist == -1) heartIcon.classList.add("fa-regular", "fa-heart");
+  else heartIcon.classList.add("fa-solid", "fa-heart");
   heartEl.appendChild(heartIcon);
 
   heartEl.addEventListener("click", (event) => {
     event.preventDefault(); // 이벤트의 기본 동작 중단
-    // 여기에 하트 아이콘 클릭 시 동작할 코드를 추가하면 됨
+    heartIcon.classList.toggle("fa-regular");
+    heartIcon.classList.toggle("fa-solid");
+    noticeLikeEvent(data);
   });
 
   const noticeLink = document.createElement("a");
@@ -71,4 +80,3 @@ export function drawNotice(data) {
   // 부모 요소에 생성한 요소 추가
   entire.appendChild(noticeList);
 }
-
