@@ -200,16 +200,34 @@ a {
   bottom: 25px;
   right: 25px;
   font-size: 20px;
-  color: black;
+  color: gray;
 }
 
-.heart-icon {
-  color: gray;
+.fa-solid.fa-heart {
+  color: red;
 }
 
 /*일단 하트에 hover됐을 때 빨간색으로 변하도록 해뒀습니다.*/
 .heart-icon:hover {
   color: red;
+}
+
+.tag-list {
+  background-color: #d3d4d7;
+  padding: 10px;
+  margin: 0 5px;
+  border-radius: 20px;
+}
+
+.tag-list:hover {
+  background-color: #3884f7;
+  color: white;
+  cursor: pointer;
+}
+
+.tag-list.selected {
+  background-color: #3884f7;
+  color: white;
 }
 
 /*메뉴바*/
@@ -284,5 +302,3 @@ a {
 .menu_bar span {
   position: relative;
 }
-
-
