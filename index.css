@@ -248,7 +248,7 @@ a {
   width: 100%;
   height: 100vh;
   z-index: 10;
-  background-color: pink;
+  background-color: white;
 }
 
 /*메뉴바 안보이게*/
@@ -257,7 +257,7 @@ a {
 }
 
 .menu_bars {
-  color: white;
+  color: black;
 }
 
 .menu_bars_title {
@@ -265,12 +265,12 @@ a {
 }
 
 .menu-bars a {
-  color: white;
+  color: black;
 }
 
 /*메뉴바 닫기 버튼*/
 .menu_bars_close_btn {
-  color: white;
+  color: black;
   position: absolute;
   top: 25px;
   right: 22px;
@@ -285,14 +285,14 @@ a {
 .menu_bar {
   text-align: center;
   padding: 20px 0;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid black;
   font-size: 18px;
   cursor: pointer;
 }
 
 /*메뉴바 타이틀 밑줄*/
 .menu_bar:first-child {
-  border-top: 1px solid red;
+  border-top: 1px solid black;
 }
 
 .menu_bar a {
@@ -301,9 +301,13 @@ a {
 }
 
 .menu_bars_title {
-  cursor: not-allowed;
-  color: white;
   opacity: 0.5;
+  font-family: "Audiowide", cursive;
+  font-style: normal;
+  font-size: 27px;
+  color: #1472ff;
+  cursor: pointer;
+
 }
 
 .menu_bar span {
