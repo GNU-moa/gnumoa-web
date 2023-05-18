@@ -9,6 +9,7 @@
 body {
   width: 100%;
   padding: 10px;
+  font-size: 16px;
   background-color: #eff0f3;
 }
 
@@ -42,7 +43,8 @@ body {
 }
 
 /*  메뉴 아이콘넣을 박스  */
-.menuBar {
+.header_icon {
+  margin-left: 10px;
   font-size: 20px;
   cursor: pointer;
 }
@@ -56,7 +58,6 @@ body {
 
 /* 공지사항 */
 .entire {
-  margin-top: 50px;
   transition: all ease-out 0.3s;
   padding: 10px;
 }
@@ -93,7 +94,7 @@ body {
 .notice-list {
   position: relative;
   display: block;
-  padding: 20px 40px;
+  padding: 20px 20px;
   margin-bottom: 40px;
   background-color: white;
   border-radius: 20px;
@@ -102,13 +103,13 @@ body {
 }
 
 .notice-list-tag {
-  font-size: 16px;
+  font-size: 12px;
   color: blue;
   margin-bottom: 5px;
 }
 
 .notice-list-title {
-  font-size: 20px;
+  font-size: 1rem;
   margin-bottom: 10px;
   font-weight: 600;
 }
@@ -129,7 +130,6 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
-
   flex-wrap: wrap;
   gap: 20px;
   opacity: 1;
@@ -197,8 +197,8 @@ a {
 
 .heart-icon {
   position: absolute;
-  bottom: 25px;
-  right: 25px;
+  bottom: 15px;
+  right: 15px;
   font-size: 20px;
   color: gray;
 }
@@ -212,10 +212,17 @@ a {
   color: red;
 }
 
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
 .tag-list {
   background-color: #d3d4d7;
   padding: 10px;
-  margin: 0 5px;
   border-radius: 20px;
 }
 
