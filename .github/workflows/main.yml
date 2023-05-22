@@ -2,11 +2,12 @@ name: Deploy to GitHub Pages
 
 on:
   workflow_dispatch:
-    inputs:
-      target_branch:
-        description: 'Target branch'
-        required: true
-        default: 'main'
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  deployments: write
 
 jobs:
   deploy:
@@ -22,5 +23,5 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.ACTION_TOKEN }}
           publish_dir: public
