@@ -291,9 +291,9 @@ a {
 }
 
 /*메뉴바 타이틀 밑줄*/
-.menu_bar:first-child {
+/* .menu_bar:first-child {
   border-top: 1px solid black;
-}
+} */
 
 .menu_bar a {
   color: white;
@@ -301,7 +301,9 @@ a {
 }
 
 .menu_bars_title {
-  opacity: 0.5;
+  position: relative;
+  top: -30px;
+  /* opacity: 0.5; */
   font-family: "Audiowide", cursive;
   font-style: normal;
   font-size: 27px;
@@ -310,6 +312,6 @@ a {
 
 }
 
-.menu_bar span {
-  position: relative;
+.menu_bars_container ul{
+  list-style-type: none;
 }
