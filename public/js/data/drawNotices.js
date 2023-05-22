@@ -54,8 +54,9 @@ export function drawNotice(data) {
   if (cachedDatas) {
     isExist = cachedDatas.findIndex((cachedData) => cachedData.id === data.id);
   }
-  if (isExist !== -1) heartIcon.classList.add("fa-solid", "fa-heart");
-  else heartIcon.classList.add("fa-regular", "fa-heart");
+  console.log(cachedDatas, isExist);
+  if (isExist == -1) heartIcon.classList.add("fa-regular", "fa-heart");
+  else heartIcon.classList.add("fa-solid", "fa-heart");
   heartEl.appendChild(heartIcon);
 
   heartEl.addEventListener("click", (event) => {
