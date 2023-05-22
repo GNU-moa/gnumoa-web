@@ -50,11 +50,10 @@ export function drawNotice(data) {
   const heartEl = document.createElement("div");
   heartEl.classList.add("heart-icon");
   const heartIcon = document.createElement("i");
-  let isExist;
+  let isExist = -1;
   if (cachedDatas) {
     isExist = cachedDatas.findIndex((cachedData) => cachedData.id === data.id);
   }
-  console.log(cachedDatas, isExist);
   if (isExist == -1) heartIcon.classList.add("fa-regular", "fa-heart");
   else heartIcon.classList.add("fa-solid", "fa-heart");
   heartEl.appendChild(heartIcon);
