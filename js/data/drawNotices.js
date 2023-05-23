@@ -28,9 +28,25 @@ export function drawNotice(data) {
   // 그리기
   const tagEl = document.createElement("p");
   tagEl.classList.add("notice-list-tag");
-  const tagText = document.createTextNode(`${major} ${category}`);
-  tagEl.appendChild(tagText);
+  // const tagText = document.createTextNode(`${major} ${category}`);
+  // tagEl.appendChild(tagText);
 
+  // major과 category색을 따로 주기 위해서 추가된 코드
+  const majorEl = document.createElement("span");
+  majorEl.classList.add("notice-list-major");
+  majorEl.textContent = major;
+  tagEl.appendChild(majorEl);
+
+  // 띄어쓰기를 포함한 텍스트 노드 추가
+  const spaceText = document.createTextNode(" ");
+  tagEl.appendChild(spaceText);
+
+  // 이것도 추가
+  const categoryEl = document.createElement("span");
+  categoryEl.classList.add("notice-list-category");
+  categoryEl.textContent = category;
+  tagEl.appendChild(categoryEl);
+  
   const titleEl = document.createElement("p");
   titleEl.classList.add("notice-list-title");
   const titleText = document.createTextNode(title);
