@@ -340,8 +340,3 @@ a {
 .menu_bars_container ul{
   list-style-type: none;
 }
-
-li.menu_bar {
-  text-align: left;
-  padding-left: 15px;
-}
