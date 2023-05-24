@@ -272,7 +272,7 @@ a {
   width: 100%;
   height: 100vh;
   z-index: 10;
-  background-color: white;
+  background-color: #eff0f3;
 }
 
 /*메뉴바 안보이게*/
@@ -296,13 +296,14 @@ a {
 .menu_bars_close_btn {
   color: black;
   position: absolute;
-  top: 25px;
+  top: 17px;
   right: 22px;
   cursor: pointer;
 }
 
 .menu_bars {
   width: 90%;
+  margin-top: 70px;
 }
 
 /*메뉴바 안에 내용*/
@@ -338,4 +339,9 @@ a {
 
 .menu_bars_container ul{
   list-style-type: none;
+}
+
+li.menu_bar {
+  text-align: left;
+  padding-left: 15px;
 }
