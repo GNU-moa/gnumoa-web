@@ -141,7 +141,7 @@ body {
   color: white;
   background-color: #8bc34a;
   border-radius: 3px;
-  padding: 3px;
+  padding: 2px;
   margin: 5px;
 }
 
@@ -339,4 +339,13 @@ a {
 
 .menu_bars_container ul{
   list-style-type: none;
+}
+
+/* ul.department_detail li {
+  padding-bottom: 9px; /* 아래쪽 패딩 설정 */
+/* } */ 
+
+.department_img {
+  position: relative;
+  top : 10px;
 }
