@@ -200,6 +200,8 @@ body {
 .department_detail {
   display: none;
   list-style-type: none;
+  position: relative;
+  top: -10px;
 }
 
 a {
@@ -341,10 +343,10 @@ a {
   list-style-type: none;
 }
 
-/* ul.department_detail li {
-  padding-bottom: 9px; /* 아래쪽 패딩 설정 */
-/* } */ 
-
+ ul.department_detail li a {
+  margin-left: 7px;
+ } 
+ 
 .department_img {
   position: relative;
   top : 10px;
