@@ -9,9 +9,7 @@ departments.forEach((department) => {
   const departmentNames = departmentDetail.getElementsByTagName("a");
   for (let i = 0; i < departmentNames.length; i++) {
     const departmentName = departmentNames[i].innerHTML;
-    departmentNames[
-      i
-    ].href = `./department.html?college=${college}&department=${departmentName}`;
+    departmentNames[i].href = `./department.html?college=${college}&department=${departmentName}`;
   }
 
   let isExpanded = false; // 초기 상태 설정
