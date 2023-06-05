@@ -340,3 +340,17 @@ a {
 .menu_bars_container ul{
   list-style-type: none;
 }
+
+
+.department_detail {
+  margin-top: 10px; /* Adjust the desired margin value */
+}
+
+.department_detail li {
+  margin-bottom: 10px; /* Adjust the desired spacing value */
+}
+
+.fa-book {
+  margin-right: 10px;
+  margin-left: 3px;
+}
